@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BlogFall.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -6,11 +7,30 @@ using System.Web.Mvc;
 
 namespace BlogFall.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController// Burda baseden miras aldık 
     {
-        public ActionResult Index()
+
+        public ActionResult Index(int? cid, int page = 1)
         {
-            return View();
+            int pageSize = 5;//Bir sayfada gözükecek yazı sayısı
+            ViewBag.SubTitle = "Yazılarım";
+            IQueryable<Post> result = db.Posts;//sorgulanabilir liste fitreleme.
+            Category cat = null;
+
+            if (cid != null)
+            {
+                cat = db.Categories.Find(cid);
+                if (cat == null)
+                {
+                    return HttpNotFound();
+                }
+                ViewBag.SubTitle = cat.CategoryName;
+                result = result.Where(x => x.CategoryId == cid);//Bu sefer filtrelediğimizi yolladık.
+            }
+            ViewBag.nextPage = page + 1;
+            ViewBag.prievPage = page - 1;
+            ViewBag.cid = cid;
+            return View(result.OrderByDescending(x => x.CreationTime).Skip((page - 1) * pageSize).Take(pageSize).ToList());//skip atla take  tane al demek orderby olmadAN ÇALIŞMAZ.
         }
 
         public ActionResult About()
@@ -25,6 +45,11 @@ namespace BlogFall.Controllers
             ViewBag.Message = "Your contact page.";
 
             return View();
+        }
+
+        public ActionResult CategoriesPartial()
+        {
+            return PartialView("_CategoriesPartial", db.Categories.ToList());
         }
     }
 }

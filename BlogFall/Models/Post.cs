@@ -32,7 +32,7 @@ namespace BlogFall.Models
         [Required]
         public DateTime? CreationTime { get; set; }
 
-        public virtual ApplicationUser Author { get; set; }
+        public virtual ApplicationUser Author { get; set; }//Applicationuser olduğu için foreign key olarak belirttik.Yukarıda ApplicationUer kullanıcı classına eş değer(UdentiyModels)
         public virtual Category Category { get; set; }
     }
 }

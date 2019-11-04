@@ -8,7 +8,8 @@ namespace BlogFall
         // For more information on bundling, visit https://go.microsoft.com/fwlink/?LinkId=301862
         public static void RegisterBundles(BundleCollection bundles)
         {
-            bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
+            bundles.UseCdn = true;//Siteyi geliştirirken usecdn kullanır siteyi publish ederken de verilen dosyayı kullanır.Debug modda localini kullanıyosun ama yayınlarsan publish edersen internet sayfasındakini kullanıyosun.
+            bundles.Add(new ScriptBundle("~/bundles/jquery", "https://code.jquery.com/jquery-3.4.1.min.js").Include(
                         "~/Scripts/jquery-{version}.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
@@ -21,6 +22,12 @@ namespace BlogFall
                       "~/Content/bootstrap.css",
                       "~/Content/fontawesome.css",
                       "~/Content/Site.css"));
+
+             #if DEBUG // derleyicide hangisini çalışıp hangisinin çalışmayacağını söylüyor.(web.configde var modumuz complication)
+                        BundleTable.EnableOptimizations = false; //Bunu yazmazsak localdekini kullanıyor yazarsak cdn dekini kullandı.
+            #else
+                        BundleTable.EnableOptimizations = true;//bu yayınlanırken aktif olmalı
+            #endif
         }
     }
 }

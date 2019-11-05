@@ -20,7 +20,7 @@ namespace BlogFall
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
-                      "~/Content/fontawesome.css",
+                      "~/Content/fontawesome-all.css",
                       "~/Content/Site.css"));
 
              #if DEBUG // derleyicide hangisini çalışıp hangisinin çalışmayacağını söylüyor.(web.configde var modumuz complication)

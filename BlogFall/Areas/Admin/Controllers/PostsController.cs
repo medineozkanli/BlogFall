@@ -6,10 +6,9 @@ using System.Web.Mvc;
 
 namespace BlogFall.Areas.Admin.Controllers
 {
-    public class DashboardController : Controller
+    public class PostsController : Controller
     {
-  
-
+        // GET: Admin/Posts
         public ActionResult Index()
         {
             return View();

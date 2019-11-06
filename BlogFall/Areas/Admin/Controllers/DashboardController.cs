@@ -6,7 +6,7 @@ using System.Web.Mvc;
 
 namespace BlogFall.Areas.Admin.Controllers
 {
-    public class DashboardController : Controller
+    public class DashboardController : AdminBaseController
     {
   
 

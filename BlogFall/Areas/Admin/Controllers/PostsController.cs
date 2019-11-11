@@ -8,12 +8,14 @@ using System.Web;
 using System.Web.Mvc;
 using System.Net;
 using System.IO;
+using BlogFall.Attributes;
 
 namespace BlogFall.Areas.Admin.Controllers
 {
+    [Breadcrumb("Yazılar")]
     public class PostsController : AdminBaseController//miras almazsak dbyi kullanamayız.
     {
-        // GET: Admin/Posts
+        [Breadcrumb("Anasayfa")]
         public ActionResult Index()
         {
             return View(db.Posts.OrderByDescending(x =>x.CreationTime).ToList());
@@ -30,7 +32,7 @@ namespace BlogFall.Areas.Admin.Controllers
             db.SaveChanges();
             return Json(new { success = true });
         }
-
+        [Breadcrumb("Düzenle")]
         public ActionResult Edit(int id)
         {
             ViewBag.CategoryId = new SelectList(db.Categories.ToList(), "Id", "CategoryName");
@@ -47,6 +49,7 @@ namespace BlogFall.Areas.Admin.Controllers
 
         [HttpPost, ValidateInput(false)]
         [ValidateAntiForgeryToken]
+        [Breadcrumb("Düzenle")]
         public ActionResult Edit(PostEditViewModel model)
         {
             if (ModelState.IsValid)
@@ -62,7 +65,9 @@ namespace BlogFall.Areas.Admin.Controllers
             ViewBag.CategoryId = new SelectList(db.Categories.ToList(), "Id", "CategoryName");
 
             return View();
+
         }
+        [Breadcrumb("Yeni")]
         public ActionResult New()
         {
 
@@ -74,6 +79,7 @@ namespace BlogFall.Areas.Admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ValidateInput(false)]
+        [Breadcrumb("Yeni")]
         public ActionResult New(PostEditViewModel model)
         {
             if (ModelState.IsValid)

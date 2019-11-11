@@ -1,0 +1,37 @@
+﻿
+@model Category
+@{
+    var isNew = Model.Id == 0;
+    ViewBag.Title = isNew ? "Yeni Kategori" : "Kategoriyi Düzenle";
+    ViewBag.HeaderTitle = isNew ? "Yeni Kategori" : "Kategoriyi Düzenle";
+}
+
+@using (Html.BeginForm(isNew ? "New" : "Edit", "Categories", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(x => x.Id)
+
+    <div class="card card-primary card-outline">
+        @*@*<div class="card-header">
+                <h3 class="card-title">Compose New Message</h3>
+            </div>*@
+
+        <div class="card-body">
+            <div class="form-group">
+                @Html.LabelFor(x => x.CategoryName)
+                @Html.TextBoxFor(x => x.CategoryName, new { @class = "form-control", placeholder = "Kategori Adı" })
+                @Html.ValidationMessageFor(x => x.CategoryName, null, new { @class = "text-danger"})
+            </div>
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+        <!-- /.card-footer -->
+    </div>
+    <!-- /.card -->
+}
+
+
+
+

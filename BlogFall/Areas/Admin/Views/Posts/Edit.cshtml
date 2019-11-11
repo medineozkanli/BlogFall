@@ -5,7 +5,7 @@
     ViewBag.HeaderTitle = isNew ? "Yeni Yazı" : "Yazıyı Düzenle";
 }
 
-@using (Html.BeginForm(isNew ? "New": "Edit", "Posts", FormMethod.Post))
+@using (Html.BeginForm(isNew ? "New" : "Edit", "Posts", FormMethod.Post))
 {
     @Html.AntiForgeryToken()
     @Html.HiddenFor(x => x.Id)
@@ -33,7 +33,7 @@
             </div>
 
             <div class="form-group">
-                @Html.TextAreaFor(x => x.Content, new { @class = "form-control"})
+                @Html.TextAreaFor(x => x.Content, new { @class = "form-control" })
                 @Html.ValidationMessageFor(x => x.Content, null, new { @class = "text-danger" })
             </div>
             @*<div class="form-group">
@@ -58,11 +58,41 @@
     </div>
     <!-- /.card -->
 }
-@section scripts{
+@section scripts {
     <script>
         $(function () {
             //Add text editor
-            $('#Content').summernote({ lang: "tr-TR", height: 300, placeholder: "Bir şeyler yazınız..." });
+            $('#Content').summernote({
+                lang: "tr-TR",
+                height: 300,
+                placeholder: "Bir şeyler yazınız..",
+                // https://stackoverflow.com/questions/21628222/summernote-image-upload // ajax ile resim yükleme
+                callbacks: {
+                    onImageUpload: function (files) {
+                        uploadFile(files[0]);
+                    }
+                }
+            });
+            function uploadFile(file) {
+                var formData = new FormData();
+                formData.append("file",file)
+                $.ajax({
+                    type: 'POST',
+                    url: "@Url.Action("AjaxImageUpload","Posts")",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        $('#Content').summernote("insertImage", data.url);//gelen verinin urlsini al.
+                        console.log(data);
+                    },
+                    error: function (data) {
+                        console.log("error");
+                        console.log(data);
+                    }
+                });
+            }
         });
     </script>
 }

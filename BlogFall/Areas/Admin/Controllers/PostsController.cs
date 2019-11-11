@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Net;
+using System.IO;
 
 namespace BlogFall.Areas.Admin.Controllers
 {
@@ -92,6 +94,22 @@ namespace BlogFall.Areas.Admin.Controllers
             ViewBag.CategoryId = new SelectList(db.Categories.ToList(), "Id", "CategoryName");
 
             return View("Edit", new PostEditViewModel());
+        }
+        [HttpPost]
+        public ActionResult AjaxImageUpload(HttpPostedFileBase file)
+        {
+            if (file == null || file.ContentLength ==0 || !file.ContentType.StartsWith("image/"))//yüklenen dosya resim olmalı başı aynı sonu jpg png gibi değişir.
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            //diğer durumda dosya yükleme.
+            var saveFolderPath = Server.MapPath("~/Upload/Posts");//Harddiskte fiziksel olarak klasörün bulunduğu yolu döndürür.(Kaydederken lazım)
+            var ext = Path.GetExtension(file.FileName);//.jpg dosya ismi (uzantısı) alıyo
+            var saveFileName = Guid.NewGuid().ToString() + ext;
+            var saveFilePath = Path.Combine(saveFolderPath, saveFileName);//Bu isimle kaydet birleştirip.
+            file.SaveAs(saveFilePath);//kaydediyor.
+
+            return Json(new { url = Url.Content("~/Upload/Posts/" + saveFileName) });
         }
     }
 }

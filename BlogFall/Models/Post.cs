@@ -34,5 +34,7 @@ namespace BlogFall.Models
 
         public virtual ApplicationUser Author { get; set; }//Applicationuser olduğu için foreign key olarak belirttik.Yukarıda ApplicationUer kullanıcı classına eş değer(UdentiyModels)
         public virtual Category Category { get; set; }
+
+        public virtual ICollection<Comment> Comments { get; set; }
     }
 }

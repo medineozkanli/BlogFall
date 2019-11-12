@@ -62,7 +62,17 @@
     <script>
         $(function () {
             //Add text editor
-            $('#Content').summernote({
+            $('#Content').summernote({ //tollbarı özelleştirdik.
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'underline', 'clear']],
+                    ['fontname', ['fontname']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['link', 'picture', 'video', 'hr']],//hrye kadar olanı al (çizgi)
+                    ['view', ['fullscreen', 'codeview', 'help']],
+                ],
                 lang: "tr-TR",
                 height: 300,
                 placeholder: "Bir şeyler yazınız..",

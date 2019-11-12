@@ -8,42 +8,51 @@
 @foreach (var item in Model)
 {
     <div class="blog-post">
-        <h2 class="blog-post-title">@item.Title</h2>
+        <h2 class="blog-post-title">
+            <a href="@Url.Action("ShowPost","Home", new { id=item.Id})" class="text-reset text-decoration-none">
+                @item.Title
+            </a>
+        </h2>
+
         <p class="blog-post-meta">@item.CreationTime<a href="#">@item.Author.UserName</a></p>
 
-        @Html.Raw(item.Content)
+        @Html.ShowPost(item.Content) @*hr etiketi için*@
+
+        <p class="text-right">
+            <a href="@Url.Action("ShowPost","Home", new { id=item.Id})">Devamını oku...</a>
+        </p>
 
     </div><!-- /.blog-post -->
 }
 
-    <nav class="blog-pagination">
-        @if (ViewBag.page < ViewBag.pageCount)
-        {
-            <a class="btn btn-outline-primary" href="@Url.Action("Index","Home",new {
+<nav class="blog-pagination">
+    @if (ViewBag.page < ViewBag.pageCount)
+    {
+        <a class="btn btn-outline-primary" href="@Url.Action("Index","Home",new {
 
                                                 cid = ViewBag.cid,
                                                 page=ViewBag.nextPage
                                                 })">&laquo; Daha eski</a>
-        }
-        else
-        {
+    }
+    else
+    {
 
-            <a class="btn btn-outline-primary disabled" href="#" tabindex="-1" aria-disabled="true">&laquo; Daha eski</a>
-        }
+        <a class="btn btn-outline-primary disabled" href="#" tabindex="-1" aria-disabled="true">&laquo; Daha eski</a>
+    }
 
-        @if (ViewBag.page > 1)
-        {
-            <a class="btn btn-outline-secondary" href="@Url.Action("Index","Home",new {
+    @if (ViewBag.page > 1)
+    {
+        <a class="btn btn-outline-secondary" href="@Url.Action("Index","Home",new {
 
                                                 cid = ViewBag.cid,
                                                 page=ViewBag.prevPage
 
                                                 })">Daha yeni&raquo;</a>
-        }
-        else
-        {
-            <a class="btn btn-outline-secondary disabled" href="#" tabindex="-1" aria-disabled="true">Daha yeni&raquo;</a>
-        }
+    }
+    else
+    {
+        <a class="btn btn-outline-secondary disabled" href="#" tabindex="-1" aria-disabled="true">Daha yeni&raquo;</a>
+    }
 
 
-    </nav>
+</nav>

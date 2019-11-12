@@ -188,6 +188,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Category.cs" />
+    <Compile Include="Models\Comment.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Post.cs" />
@@ -2034,6 +2035,7 @@
     <Content Include="Views\Manage\UploadAvatar.cshtml" />
     <Content Include="Upload\Posts\.gitkeep" />
     <Content Include="Upload\Profiles\.gitkeep" />
+    <Content Include="Views\Home\ShowPost.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

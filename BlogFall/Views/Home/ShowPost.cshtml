@@ -1,105 +1,164 @@
 ﻿@model Post
 @{
-    ViewBag.Title = "Model.Title";
+    /**/
+
+    ViewBag.Title = Model.Title;
 }
+
 <div class="blog-post">
     <h2 class="blog-post-title">@Model.Title</h2>
-    <p class="blog-post-meta">@Model<a href="#">@Model.Author.UserName</a></p>
+    <p class="blog-post-meta">@Model.CreationTime <a href="#">@Model.Author.UserName</a></p>
 
     @Html.ShowPost(Model.Content)
-
 </div>
 
-
+@*https://blackrockdigital.github.io/startbootstrap-blog-post/*@
 <!-- Comments Form -->
 <div class="card my-4">
-    <h5 class="card-header">Yorum yazın:</h5>
+    <h5 class="card-header">Yorum yazın :</h5>
     <div class="card-body">
         <form id="commentForm" name="commentForm">
             @Html.AntiForgeryToken()
             @Html.Hidden("ParentId")
+            @Html.Hidden("PostId", Model.Id)
             <div class="row">
-                <div class=" col-md-6">
+                <div class="col-md-6">
                     <div class="form-group">
                         <input name="AuthorName" type="text" class="form-control" placeholder="İsim" required />
                     </div>
                 </div>
-                <div class=" col-md-6">
+                <div class="col-md-6">
                     <div class="form-group">
                         <input name="AuthorEmail" type="email" class="form-control" placeholder="E-mail" required />
                     </div>
                 </div>
             </div>
             <div class="form-group">
-                <textarea name="Content" class="form-control" rows="3" placeholder="Yorumunuz..." required></textarea>
+                <textarea name="Content" class="form-control" rows="3" placeholder="Yorumunuz.." required></textarea>
             </div>
-            <button type="submit" class="btn btn-primary comment-submit">Gönder</button>@*//ajaxla formu göndercez comment-submit*@
+            <button type="submit" class="btn btn-primary comment-submit">Gönder</button> @*ajaxla form göndericez*@
         </form>
     </div>
 </div>
-@if (Model.Comments.Count == 0)
-{
-    <div class="card mb-3">
-        <div class="card-header">
-            <h5>Yorumlar:</h5>
-        </div>
-        <div class="card-body">
-            <div class="text-center">
-                Bu yazıya henüz yorum yazılmamış.
-            </div>
-        </div>
+<div class="card mb-3" id="comments">
+    <div class="card-header">
+        <h5>Yorumlar :</h5>
     </div>
-}
-@foreach (var comment in Model.Comments)
-{
-    <!-- Comment with nested comments -->
-
-    <div class="media mb-4">
-        <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
-        <div class="media-body">
-            <h5 class="mt-0">@comment.AuthorName</h5>
-
-            @comment.Content
-
-            <div class="text-right">
-                <a href="#" class="comment-reply-link" data-comment-id="@comment.Id">Cevapla</a>
+    <div class="card-body" >
+        @if (Model.Comments.Count == 0)
+        {
+            <div class="texr-center">
+                Bu yazıya henüz yorum yapılmamış.
             </div>
-            <div class="comment-reply-form">
 
-            </div>
-            @foreach (var subcomment in comment.Replies)
-            {
+        }
 
-                <div class="media mt-4">
-                    <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
-                    <div class="media-body">
-                        <h5 class="mt-0">@subcomment.AuthorName</h5>
+        @foreach (var comment in Model.Comments.Where(x => x.ParenId == null).OrderByDescending(x => x.CreationTime))
+        {
+            <!-- Comment with nested comments -->
+            <div class="media mb-4" id="comment-@comment.Id">
+                <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
+                <div class="media-body">
+                    <h5 class="mt-0">@comment.AuthorName</h5>
 
-                        @subcomment.Content
+                    @comment.Content
 
+                    <div class="text-right">
+                        <a href="#" class="comment-reply-link" data-comment-id="@comment.Id">Cevapla</a> @*32 nolu yoruma yorum yapıyorum gibisinden*@
                     </div>
+
+                    <div class="comment-reply-form"></div>
+
+                    @foreach (var subcomment in comment.Replies.OrderBy(x => x.CreationTime))
+                    {
+                        <div class="media mt-4" id="comment-@subcomment.Id">
+                            <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
+                            <div class="media-body">
+                                <h5 class="mt-0">@subcomment.AuthorName</h5>
+
+                                @subcomment.Content
+
+                            </div>
+                        </div>
+                    }
+
                 </div>
-            }
-
-        </div>
+            </div>
+        }
     </div>
+</div>
 
-}
+<style>
+    .comment-highlight {
+        animation: colorchange 2s;
+    }
+
+    @@keyframes colorchange {
+        0% {
+            background-color: #51b8c2;
+        }
+
+        100% {
+            background-color: transparent;
+        }
+    }
+</style>
 
 @section scripts{
     <script>
+        $(function () {//yeni bir yorum girilirse onun olduğu konuma gider.
+            if (location.hash && Location.hash.startWith("comment-")) {
+                var hash = location.hash;
+
+                if ($(hash).length) {
+                    $(hash).addClass("comment-highlight");
+                    scrollTo(0, $(hash).offset().top - innerHeight / 2 + 50);
+                }
+            }
+            if (sessionStorage.successMessage) {
+                toastr.success(sessionStorage.successMessage);
+                sessionStorage.removeItem("successMessage");
+            }
+        });
+
 
         $(".comment-reply-link").click(function (event) {
             event.preventDefault();//bir yere gitmesini engelliyor.
+            var commentId = $(this).data("comment-id");//parent id doldurmak için
 
             $(".comment-reply-form").html("");
-            $(this).parent().next().html($("#commentForm").clone().removeAttr("id"));//bu linki taşıyan divin sonraki kardeşi.
+
+            var commentForm = $("#commentForm").clone().removeAttr("id");
+            commentForm.find('input[name="ParentId"]').val(commentId);//parent id dolduruyoruz find(belli bir bölgede arama) metodu arama yapıyor seectorle spesifik alanda arıyor.
+
+            $(this).parent().next().html(commentForm);//bu linki taşıyan divi n sonraki kardeşi
         });
 
-        $('form[name="commentForm"]').submit(function (event) {
+          $('body').on("submit",'form[name="commentForm"]',function (event) {
             event.preventDefault();
-            alert("form-submit oldu");
+            var formData= new FormData(this);//html elementi gelmesi (Formun kendi) lazım tetikleneni görmek için.
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("SendComment", "Home")",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                    if (result.Errors) {
+                        toastr.error(result.Errors[0]);
+                    }
+                    else {
+                        sessionStorage.successMessage = "Yorumunuz başarıyla eklendi.";
+                        window.location.hash = "#comment-" + result.Id;
+                        location.reload();
+                    }
+                }
+
+              });
+
         });
+
+
     </script>
 
 }

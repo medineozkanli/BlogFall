@@ -14,7 +14,12 @@
             </a>
         </h2>
 
-        <p class="blog-post-meta">@item.CreationTime<a href="#">@item.Author.UserName</a></p>
+        <p class="blog-post-meta">@item.CreationTime
+        <a href="#">@item.Author.UserName</a>                                             
+        <a href="@Url.Action("ShowPost","Home", new { id=item.Id} )#comments">
+           @item.Comments.Count Yorum
+           </a>
+        </p>
 
         @Html.ShowPost(item.Content) @*hr etiketi için*@
 

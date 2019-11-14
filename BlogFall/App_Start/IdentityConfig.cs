@@ -40,7 +40,7 @@ namespace BlogFall
         {
         }
 
-        public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options, IOwinContext context) 
+        public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options, IOwinContext context)
         {
             var manager = new ApplicationUserManager(new UserStore<ApplicationUser>(context.Get<ApplicationDbContext>()));
             // Configure validation logic for usernames
@@ -81,7 +81,7 @@ namespace BlogFall
             var dataProtectionProvider = options.DataProtectionProvider;
             if (dataProtectionProvider != null)
             {
-                manager.UserTokenProvider = 
+                manager.UserTokenProvider =
                     new DataProtectorTokenProvider<ApplicationUser>(dataProtectionProvider.Create("ASP.NET Identity"));
             }
             return manager;
@@ -89,7 +89,7 @@ namespace BlogFall
     }
 
     // Configure the application sign-in manager which is used in this application.
-    public class ApplicationSignInManager : SignInManager<ApplicationUser, string>
+    public class ApplicationSignInManager : SignInManager<ApplicationUser, string> //Giriş Yöneticisi Identitiy bizim için oluşturuyo.
     {
         public ApplicationSignInManager(ApplicationUserManager userManager, IAuthenticationManager authenticationManager)
             : base(userManager, authenticationManager)
@@ -104,6 +104,17 @@ namespace BlogFall
         public static ApplicationSignInManager Create(IdentityFactoryOptions<ApplicationSignInManager> options, IOwinContext context)
         {
             return new ApplicationSignInManager(context.GetUserManager<ApplicationUserManager>(), context.Authentication);
+        }
+        public override Task<SignInStatus> PasswordSignInAsync(string userName, string password, bool isPersistent, bool shouldLockout)
+        //burda aktif olup olmadığına giriş yapabilirmi diye bakcaz.
+        {
+            var user = UserManager.FindByName(userName);//kullanıcıyı bulduk.
+
+            if (user != null && !user.IsEnabled)
+            {
+                return Task.FromResult<SignInStatus>(SignInStatus.LockedOut);//parolaya felan bakmadan kitli diyoruz.
+            }
+            return base.PasswordSignInAsync(userName, password, isPersistent, shouldLockout);
         }
     }
 }

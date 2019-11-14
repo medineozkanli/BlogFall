@@ -1,0 +1,75 @@
+﻿@model List<ApplicationUser>
+@{
+    ViewBag.Title = "Kullanıcılar";
+    ViewBag.HeaderTitle = "Kullanıcılar";
+}
+
+<div class="card">
+    <div class="card-body">
+
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Kullanıcı Adı</th>
+                    <th>Aktif Mi?</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr>
+                        <td>@(i + 1)</td>
+                        <td>@Model[i].UserName</td>
+                        <td>
+                            @Html.CheckBox("IsEnabled",
+                           Model[i].IsEnabled,
+                           new {
+                               data_bootstrap_switch = "",
+                               data_off_color = "danger",
+                               data_on_color = "success",
+                               data_off_text = "Hayır",
+                               data_on_text = "Evet",
+                               data_user_id = Model[i].Id//kuallanıcının idsini alıp checkbox false yada true durumunu bu şekilde yollucaz.
+                           })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>
+@section scripts{
+    <script>
+        var table = $(".table").DataTable({
+               order:[[0,"asc"]],
+                language: {
+                    url: "@Url.Content("~/Areas/Admin/plugins/datatables/Turkish.json")"
+                }
+        });
+
+        //admin switch'ini disable yap.
+        var adminId = "@User.Identity.GetUserId()";
+        $('input:checkbox[data-user-id="' + adminId + '"]').prop("disabled", true);
+
+
+        $("input[data-bootstrap-switch]").bootstrapSwitch({//data- ile attribute yazabiliriz .
+            onSwitchChange: function (event, state) {
+                var userId = $(this).data("user-id"); // id sini aldık. ajax ile kullanıcının durumunu sunucuya yollucaz.
+
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("ChangeStatus","Users")",
+                    data: { UserId: userId, IsEnabled: state },
+                    success: function (result) {
+
+                    }
+                });
+
+            }
+        });//durum için
+    </script>
+
+}
+

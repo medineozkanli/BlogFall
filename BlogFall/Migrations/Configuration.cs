@@ -19,7 +19,11 @@ namespace BlogFall.Migrations
         protected override void Seed(BlogFall.Models.ApplicationDbContext context)
         {
             #region Admin rolünü ve kullanýcýsýný oluþtur
-
+            //foreach (var item in context.Users) //Bunu bi seferlik yaptýk tüm kullanýcýlar aktif oldu.
+            //{
+            //    item.IsEnabled = true;
+            //}
+            //return;
             if (!context.Roles.Any(r => r.Name == "Admin"))
             {
                 var store = new RoleStore<IdentityRole>(context);//Veritabani ile iliþkiyi saðlýyor.Bir managerin kendine veriði komutlarý uyguluyo.
@@ -33,7 +37,8 @@ namespace BlogFall.Migrations
             {
                 var store = new UserStore<ApplicationUser>(context);
                 var manager = new UserManager<ApplicationUser>(store);
-                var user = new ApplicationUser { UserName = "ozknlimedine@gmail.com", Email = "ozknlimedine@gmail.com" };//eðer yoksa bu kiþiyi oluþtur diyoruz.
+                var user = new ApplicationUser { UserName = "ozknlimedine@gmail.com",
+                    Email = "ozknlimedine@gmail.com" };//eðer yoksa bu kiþiyi oluþtur diyoruz.
 
                 manager.Create(user, "Ankara1.");
                 manager.AddToRole(user.Id, "Admin");//Admin olarak ekledik.

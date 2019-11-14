@@ -12,6 +12,11 @@ namespace BlogFall.Models
     // You can add profile data for the user by adding more properties to your ApplicationUser class, please visit https://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
     public class ApplicationUser : IdentityUser//Identitinin senin için kullancı clası oluşturmak için miras aldık .Bunlara ek propert ekleyebiliriz ad soyad gibi.
     {
+        public ApplicationUser()
+        {
+            //Varsayılan değer aksi belirtilmediği sürece true olacak.
+            IsEnabled = true;
+        }
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
@@ -21,6 +26,8 @@ namespace BlogFall.Models
         }
         [StringLength(100)]
         public string Photo { get; set; }
+
+        public bool IsEnabled { get; set; }  //Aktif olup olmaması ekleyip update database yaptık.
         public virtual ICollection<Post> Posts { get; set; }
 
         public virtual ICollection<Comment> Comments { get; set; }

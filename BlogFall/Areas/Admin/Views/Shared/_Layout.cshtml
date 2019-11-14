@@ -24,6 +24,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" href="~/Areas/Admin/plugins/toastr/toastr.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="~/Areas/Admin/dist/css/adminlte.min.css">
+    <link href="~/Areas/Admin/plugins/bootstrap-switch/css/bootstrap4/bootstrap-switch.min.css" rel="stylesheet" />
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 </head>
@@ -167,7 +168,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <img src="~/Areas/Admin/dist/img/avatar2.png" class="img-circle elevation-2" alt="User Image">
                     </div>
                     <div class="info">
-                        <a href="#" class="d-block">@User.Identity.Name</a>
+                        <a href="@Url.Action("Index","Manage", new { area=""})" class="d-block">@User.Identity.Name</a>
                     </div>
                 </div>
 
@@ -184,7 +185,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             </a>
                         </li>
                         <!-- Add icons to the links using the .nav-icon class
-                        with font-awesome or any other icon font library -->
+    with font-awesome or any other icon font library -->
 
                         <li class="nav-item has-treeview menu-open">
                             <a href="@Url.Action("Index","Dashboard")" class="nav-link ">
@@ -237,15 +238,54 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                 </li>
                             </ul>
                         </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-th"></i>
+
+
+                        <li class="nav-item has-treeview menu-open">
+                            <a href="@Url.Action("Index","Dashboard")" class="nav-link ">
+                                <i class="nav-icon fas fa-users"></i>
                                 <p>
-                                    Simple Link
-                                    <span class="right badge badge-danger">New</span>
+                                    Kullanıcılar
+                                    <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
+                            <ul class="nav nav-treeview">
+
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index","Users")" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Kullanıcıları Listele</p>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
+
+                        <li class="nav-item has-treeview menu-open">
+                            <a href="#" class="nav-link ">
+                                <i class="nav-icon fas fa-comments"></i>
+                                <p>Yorumlar
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index","Comments")" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Yorumları Listele </p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        @*<li class="nav-item">
+            <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-th"></i>
+                <p>
+                    Simple Link
+                    <span class="right badge badge-danger">New</span>
+                </p>
+            </a>
+        </li>*@
                     </ul>
                 </nav>
                 <!-- /.sidebar-menu -->
@@ -318,6 +358,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="~/Areas/Admin/plugins/summernote/lang/summernote-tr-TR.js"></script>
     <!-- Toastr -->
     <script src="~/Areas/Admin/plugins/toastr/toastr.min.js"></script>
+    <script src="~/Areas/Admin/plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>
+
 
     @RenderSection("scripts", false)
 </body>

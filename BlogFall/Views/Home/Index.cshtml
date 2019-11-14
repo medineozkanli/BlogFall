@@ -14,17 +14,20 @@
             </a>
         </h2>
 
-        <p class="blog-post-meta">@item.CreationTime
-        <a href="#">@item.Author.UserName</a>                                             
-        <a href="@Url.Action("ShowPost","Home", new { id=item.Id} )#comments">
-           @item.Comments.Count Yorum
-           </a>
+        <p class="blog-post-meta">
+            @item.CreationTime
+            <a href="#">@item.Author.UserName</a>
         </p>
 
-        @Html.ShowPost(item.Content) @*hr etiketi için*@
+        @Html.ShowPostIntro(item.Content)
 
-        <p class="text-right">
-            <a href="@Url.Action("ShowPost","Home", new { id=item.Id})">Devamını oku...</a>
+        <p class="d-flex small blog-post-meta-footer">
+            <a href="@Url.Action("ShowPost", "Home", new { id=item.Id})#comments" class="d-inline-block">
+                <i class="far fa-comment mr-1"></i> @item.Comments.Count Yorum
+            </a>
+            <a href="@Url.Action("ShowPost", "Home", new { id=item.Id})" class="ml-auto d-inline-block">
+                Devamını oku..
+            </a>
         </p>
 
     </div><!-- /.blog-post -->

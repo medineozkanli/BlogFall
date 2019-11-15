@@ -1,6 +1,7 @@
 namespace BlogFall.Migrations
 {
     using BlogFall.Models;
+    using BlogFall.Utility;
     using Microsoft.AspNet.Identity;
     using Microsoft.AspNet.Identity.EntityFramework;
     using System;
@@ -18,6 +19,10 @@ namespace BlogFall.Migrations
 
         protected override void Seed(BlogFall.Models.ApplicationDbContext context)
         {
+            //bir kerelik true yaptýk.
+            var autoGenerateSlugs = false;//kategori yazý slug oluþtursun mu?
+            var autoGenerateSlugsAll = false;//slaglarý olanlarý tekrar oluþtur.
+
             #region Admin rolünü ve kullanýcýsýný oluþtur
             //foreach (var item in context.Users) //Bunu bi seferlik yaptýk tüm kullanýcýlar aktif oldu.
             //{
@@ -37,8 +42,11 @@ namespace BlogFall.Migrations
             {
                 var store = new UserStore<ApplicationUser>(context);
                 var manager = new UserManager<ApplicationUser>(store);
-                var user = new ApplicationUser { UserName = "ozknlimedine@gmail.com",
-                    Email = "ozknlimedine@gmail.com" };//eðer yoksa bu kiþiyi oluþtur diyoruz.
+                var user = new ApplicationUser
+                {
+                    UserName = "ozknlimedine@gmail.com",
+                    Email = "ozknlimedine@gmail.com"
+                };//eðer yoksa bu kiþiyi oluþtur diyoruz.
 
                 manager.Create(user, "Ankara1.");
                 manager.AddToRole(user.Id, "Admin");//Admin olarak ekledik.
@@ -138,7 +146,7 @@ namespace BlogFall.Migrations
             #endregion//ctrl+k+s
 
             #region Admin kullanýcýsýna 77 yeni yazý ekle
-            if (!context.Categories.Any(x => x.CategoryName=="Diðer"))//ilk boþ olduðunda gircek bidaha girmeyecek.
+            if (!context.Categories.Any(x => x.CategoryName == "Diðer"))//ilk boþ olduðunda gircek bidaha girmeyecek.
             {
                 ApplicationUser admin = context.Users.Where(x => x.UserName == "ozknlimedine@gmail.com").FirstOrDefault();
                 if (admin != null)
@@ -173,6 +181,27 @@ namespace BlogFall.Migrations
                 }
             }
             #endregion
+
+            #region Mevcut kategori ve yazýlarýn slug'larýný oluþtur.
+            if (autoGenerateSlugsAll)
+            {
+                foreach ( var item in context.Categories)
+                {
+                    if (true || string.IsNullOrEmpty(item.Slug))// slag yoksa
+                    {
+                        item.Slug = UrlService.URLFriendly(item.CategoryName);
+                    }
+                }
+
+                foreach (var item in context.Posts)
+                {
+                    if (true || string.IsNullOrEmpty(item.Slug))// slag yoksa
+                    {
+                        item.Slug = UrlService.URLFriendly(item.Title);
+                    }
+                }
+                #endregion
+            }
 
         }
     }

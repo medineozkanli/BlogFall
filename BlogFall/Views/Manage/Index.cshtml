@@ -10,15 +10,8 @@
     <h4>Change your account settings</h4>
     <hr />
     <div class=" mb-3">
-        @if (string.IsNullOrEmpty(Model.Photo))
-        {
 
-            <img src="~/Images/avatar.jpg" />
-        }
-        else
-        {
-            <img src="~/Upload/Profiles/@Model.Photo" height="150" class="rounded"/>
-        }
+        <img src="@Html.ProfilPhotoPath()" height="150" class="rounded" />
         <br />
         <a href="@Url.Action("UploadAvatar","Manage")">Resmi Güncelle</a>
     </div>

@@ -1,4 +1,6 @@
 ﻿using BlogFall.Attributes;
+using BlogFall.Models;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,7 +45,7 @@ namespace BlogFall.Helpers
             string action = htmlHelper.ActionName();//action name aldık.
 
             Type t = Type.GetType("BlogFall.Areas.Admin.Controllers." + controller + "Controller");//Controllerın classının  tipi
-            MethodInfo mi = t.GetMethods().FirstOrDefault(x => x.Name ==action);
+            MethodInfo mi = t.GetMethods().FirstOrDefault(x => x.Name == action);
 
             BreadcrumbAttribute ba = mi.GetCustomAttribute(typeof(BreadcrumbAttribute)) as BreadcrumbAttribute;
 
@@ -56,24 +58,59 @@ namespace BlogFall.Helpers
         }
         public static IHtmlString ShowPostIntro(this HtmlHelper htmlHelper, string content)
         {
+            if (string.IsNullOrEmpty(content))
+            {
+                return htmlHelper.Raw("");
+            }
+
+
             int pos = content.IndexOf("<hr>");
             if (pos == -1)
             {
                 return htmlHelper.Raw(content);
             }
             return htmlHelper.Raw(content.Substring(0, pos));
-            
+
         }
 
         public static IHtmlString ShowPost(this HtmlHelper htmlHelper, string content)
         {
+            if (string.IsNullOrEmpty(content))
+            {
+                return htmlHelper.Raw("");
+            }
+
             int pos = content.IndexOf("<hr>"); //hr varsa il hr yi yok etcek yoksa aynen döndürcek.
             if (pos == -1)
             {
                 return htmlHelper.Raw(content);
             }
-            return htmlHelper.Raw(content.Remove(pos, 4)); 
+            return htmlHelper.Raw(content.Remove(pos, 4));
 
         }
+        public static string ProfilPhotoPath(this HtmlHelper htmlHelper)//src içine yazılcak kısmı döndürcek.
+        {
+            string userId = htmlHelper.ViewContext.HttpContext.User.Identity.GetUserId();
+            UrlHelper urlHelper = new UrlHelper(htmlHelper.ViewContext.RequestContext, htmlHelper.RouteCollection);
+            //giriş yapan kullanıcı varsa
+            if (userId != null)
+            {
+                using (var db = new ApplicationDbContext())
+                {
+                    var user = db.Users.Find(userId);
+                    //fotoğrafı varsa
+                    if (userId != null && !string.IsNullOrEmpty(user.Photo))
+                    {
+
+                        return urlHelper.Content("~/Upload/Profiles/" + user.Photo);
+                    }
+
+                }
+
+            }
+            return urlHelper.Content("~/Images/avatar.jpg");
+
+        }
+
     }
 }

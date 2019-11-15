@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using System.Net;
 using System.IO;
 using BlogFall.Attributes;
+using BlogFall.Utility;
 
 namespace BlogFall.Areas.Admin.Controllers
 {
@@ -18,7 +19,7 @@ namespace BlogFall.Areas.Admin.Controllers
         [Breadcrumb("Anasayfa")]
         public ActionResult Index()
         {
-            return View(db.Posts.OrderByDescending(x =>x.CreationTime).ToList());
+            return View(db.Posts.OrderByDescending(x => x.CreationTime).ToList());
         }
         [HttpPost]
         public ActionResult Delete(int id)
@@ -41,7 +42,8 @@ namespace BlogFall.Areas.Admin.Controllers
                 Id = x.Id,
                 CategoryId = x.CategoryId,
                 Content = x.Content,
-                Title = x.Title
+                Title = x.Title,
+                Slug = x.Slug
             }).FirstOrDefault(x => x.Id == id);
             return View(vm);
         }
@@ -58,7 +60,7 @@ namespace BlogFall.Areas.Admin.Controllers
                 post.Content = model.Content;
                 post.CategoryId = model.CategoryId;
                 post.Title = model.Title;
-
+                post.Slug = model.Slug;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -90,7 +92,8 @@ namespace BlogFall.Areas.Admin.Controllers
                     Content = model.Content,
                     CategoryId = model.CategoryId,
                     AuthorId = User.Identity.GetUserId(),
-                    CreationTime = DateTime.Now
+                    CreationTime = DateTime.Now,
+                    Slug = model.Slug
                 };
                 db.Posts.Add(post);
                 db.SaveChanges();
@@ -104,7 +107,7 @@ namespace BlogFall.Areas.Admin.Controllers
         [HttpPost]
         public ActionResult AjaxImageUpload(HttpPostedFileBase file)
         {
-            if (file == null || file.ContentLength ==0 || !file.ContentType.StartsWith("image/"))//yüklenen dosya resim olmalı başı aynı sonu jpg png gibi değişir.
+            if (file == null || file.ContentLength == 0 || !file.ContentType.StartsWith("image/"))//yüklenen dosya resim olmalı başı aynı sonu jpg png gibi değişir.
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -116,6 +119,11 @@ namespace BlogFall.Areas.Admin.Controllers
             file.SaveAs(saveFilePath);//kaydediyor.
 
             return Json(new { url = Url.Content("~/Upload/Posts/" + saveFileName) });
+        }
+        [HttpPost]
+        public ActionResult GenerateSlug(string title)
+        {
+            return Json(UrlService.URLFriendly(title));
         }
     }
 }

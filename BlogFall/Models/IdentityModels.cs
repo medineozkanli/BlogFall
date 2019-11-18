@@ -44,6 +44,14 @@ namespace BlogFall.Models
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();//cascade delete kaldırıyoruz.Bu sayade default olarak bağlı tablolar için çok ilişkilerde otomatik silmeyi kaldır.
+
+            //her yorumun zorunlu olarak bir yazısı vardır.
+            // o yazının da yorumları vardır.
+            //yazı silindiğinde yorumlarıda otomatik olarak sil.
+            modelBuilder.Entity<Comment>()
+                .HasRequired(x => x.Post)
+                .WithMany(x => x.Comments)
+                .WillCascadeOnDelete();
         }
         public static ApplicationDbContext Create()
         {
